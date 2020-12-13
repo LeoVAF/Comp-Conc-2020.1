@@ -44,24 +44,35 @@ void imprimeMatriz(double* M, int N){
 }
 
 
-int main(){
+int main(int argc, char* argv[]){
 	srand(time(NULL)); // Semente para matrizes aleatórias
-	// Dados iniciais
-	puts("Digite a dimensão da matriz:");
-	scanf("%i", &N);
-	puts("Digite a quantidade de threads:");
-	scanf("%i",&NTHREADS);
-	/* Trata caso de invalidez na dimensão */
-	while(N < 1){
-		printf("Dimensão %i inválida, digite novamente:\n",N);
-		scanf("%i",&N);
-	}
-	
-	/* Trata caso de invalidez no número de threads */
-	while(NTHREADS < 1){
-		printf("Quantidade de threads inválida: %i, digite novamente:\n",NTHREADS);
+	if(argc == 1){
+		// Dados iniciais
+		puts("Digite a dimensão da matriz:");
+		scanf("%i", &N);
+		puts("Digite a quantidade de threads:");
 		scanf("%i",&NTHREADS);
+		/* Trata caso de invalidez na dimensão */
+		while(N < 1){
+			printf("Dimensão %i inválida, digite novamente:\n",N);
+			scanf("%i",&N);
+		}
+	
+		/* Trata caso de invalidez no número de threads */
+		while(NTHREADS < 1){
+			printf("Quantidade de threads inválida: %i, digite novamente:\n",NTHREADS);
+			scanf("%i",&NTHREADS);
+		}
 	}
+	else if(argc == 3){
+		N = atoi(argv[1]);
+		NTHREADS = atoi(argv[2]);
+	}
+	else{
+		puts("ERRO: Parâmetros inválidos!");
+		exit(1);
+	}
+	printf("Threads: %i\nDimensão das matrizes: %i\n\n", NTHREADS,N);
 	pthread_t tid[NTHREADS];
 	int thread[NTHREADS];
 	// Alocação de memória
@@ -94,9 +105,11 @@ int main(){
 	tempo_b = (clock() - tempoinic)*T/CLOCKS_PER_SEC; // Tempo de multiplicação de matrizes
 
 	// Impressão das matrizes 
-	/*printf("\nA:\n");imprimeMatriz(A, N);puts("");
+	/*
+	printf("\nA:\n");imprimeMatriz(A, N);puts("");
 	printf("B:\n");imprimeMatriz(B, N);puts("");
-	printf("C:\n");imprimeMatriz(C, N);puts(""); // Impressão da matriz resultante*/
+	printf("C:\n");imprimeMatriz(C, N);puts(""); // Impressão da matriz resultante
+	*/
 	
 	free(A);free(B);free(C); // Liberação de memória;
 	tempo_c = (clock() - tempoinic)*T/CLOCKS_PER_SEC; // Tempo de finalização do programa
@@ -109,7 +122,6 @@ int main(){
 	else printf("Medidas de tempo:\nInicialização das estruturas = %.10f\nMultiplicação de matrizes = %.10f\nFinalização do programa = %.10f\n",tempo_a,tempo_b,tempo_c);
 	return 0;
 }
-
 
 
 
