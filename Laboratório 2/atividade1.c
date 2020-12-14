@@ -131,6 +131,6 @@ int main(int argc, char* argv[]){
 	GET_TIME(tf); // Tempo de finalização do programa
 	tempo_c = tf - ti + tempo_b + tempo_a;
 	// Impressão dos tempos
-	printf("Medidas de tempo:\nInicialização das estruturas = %.10f ms\nMultiplicação de matrizes = %.10f ms\nFinalização do programa = %.10f ms\n",tempo_a,tempo_b,tempo_c);
+	printf("Medidas de tempo:\nInicialização das estruturas = %.10f s\nMultiplicação de matrizes = %.10f s\nFinalização do programa = %.10f s\n",tempo_a,tempo_b,tempo_c);
 	return 0;
 }
