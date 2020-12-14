@@ -94,7 +94,7 @@ int main(int argc, char* argv[]){
 	C = (double*) malloc(tam*sizeof(double));
 	
 	/* Início da marcação temporal */
-	double ti, tf, tempo_a, tempo_b, tempo_c;
+	double ti,tf, tempo_a, tempo_b, tempo_c;
 	GET_TIME(ti);
 	
 	// Define um intervalo onde os elementos das matrizes podem variar
@@ -107,7 +107,7 @@ int main(int argc, char* argv[]){
 		*(B+i) = (double) rand()/RAND_MAX*(b-a) + a;
 	}
 	GET_TIME(tf);
-	tempo_a = tf-ti; // Tempo de inicialização das matrizes
+	tempo_a = tf - ti; // Tempo de inicialização das matrizes
 	ti = tf;
 	
 	// Multiplicação (chamada das threads)
@@ -128,8 +128,8 @@ int main(int argc, char* argv[]){
 	*/
 	
 	free(A);free(B);free(C); // Liberação de memória;
-	GET_TIME(tempo_c); // Tempo de finalização do programa
-	
+	GET_TIME(tf); // Tempo de finalização do programa
+	tempo_c = tf - ti + tempo_b + tempo_a;
 	// Impressão dos tempos
 	printf("Medidas de tempo:\nInicialização das estruturas = %.10f ms\nMultiplicação de matrizes = %.10f ms\nFinalização do programa = %.10f ms\n",tempo_a,tempo_b,tempo_c);
 	return 0;
