@@ -2,7 +2,19 @@
 #include<stdlib.h>
 #include<pthread.h>
 #include<time.h>
-#define T 1000 // Unidade de tempo (1 para segundos, milissegundos para 1000, ...)
+#ifndef _CLOCK_TIMER_H
+#define _CLOCK_TIMER_H
+
+#include <sys/time.h>
+#define BILLION 1000000000L
+
+/* The argument now should be a double (not a pointer to a double) */
+#define GET_TIME(now) { \
+   struct timespec time; \
+   clock_gettime(CLOCK_MONOTONIC, &time); \
+   now = time.tv_sec + time.tv_nsec/1000000000.0; \
+}
+#endif
 
 // Dados
 int N;
@@ -82,7 +94,8 @@ int main(int argc, char* argv[]){
 	C = (double*) malloc(tam*sizeof(double));
 	
 	/* Início da marcação temporal */
-	double tempoinic = clock(), tempo_a, tempo_b, tempo_c;
+	double ti, tf, tempo_a, tempo_b, tempo_c;
+	GET_TIME(ti);
 	
 	// Define um intervalo onde os elementos das matrizes podem variar
 	double a = -5;
@@ -93,7 +106,9 @@ int main(int argc, char* argv[]){
 		*(A+i) = (double) rand()/RAND_MAX*(b-a) + a;
 		*(B+i) = (double) rand()/RAND_MAX*(b-a) + a;
 	}
-	tempo_a = (clock() - tempoinic)*T/CLOCKS_PER_SEC; // Tempo de inicialização das matrizes
+	GET_TIME(tf);
+	tempo_a = tf-ti; // Tempo de inicialização das matrizes
+	ti = tf;
 	
 	// Multiplicação (chamada das threads)
 	for(int i = 0; i < NTHREADS; i++){
@@ -102,8 +117,9 @@ int main(int argc, char* argv[]){
 	}
 	// Espera bloqueante de main
 	for(int i = 0; i < NTHREADS; i++) if(pthread_join(tid[i],NULL)) printf("Erro ao esperar término da thread %li\n",tid[i]);
-	tempo_b = (clock() - tempoinic)*T/CLOCKS_PER_SEC; // Tempo de multiplicação de matrizes
-
+	GET_TIME(tf);
+	tempo_b = tf - ti; // Tempo de multiplicação de matrizes
+	ti = tf;
 	// Impressão das matrizes 
 	/*
 	printf("\nA:\n");imprimeMatriz(A, N);puts("");
@@ -112,20 +128,9 @@ int main(int argc, char* argv[]){
 	*/
 	
 	free(A);free(B);free(C); // Liberação de memória;
-	tempo_c = (clock() - tempoinic)*T/CLOCKS_PER_SEC; // Tempo de finalização do programa
+	GET_TIME(tempo_c); // Tempo de finalização do programa
 	
 	// Impressão dos tempos
-	if(T == 1) printf("Medidas de tempo:\nInicialização das estruturas = %.10f s\nMultiplicação de matrizes = %.10f s\nFinalização do programa = %.10f s\n",tempo_a,tempo_b,tempo_c);
-	else if(T == 1000) printf("Medidas de tempo:\nInicialização das estruturas = %.10f ms\nMultiplicação de matrizes = %.10f ms\nFinalização do programa = %.10f ms\n",tempo_a,tempo_b,tempo_c);
-	else if(T == 1000000) printf("Medidas de tempo:\nInicialização das estruturas = %.10f μs\nMultiplicação de matrizes = %.10f μs\nFinalização do programa = %.10f μs\n",tempo_a,tempo_b,tempo_c);
-	else if(T == 1000000000) printf("Medidas de tempo:\nInicialização das estruturas = %.10f ns\nMultiplicação de matrizes = %.10f ns\nFinalização do programa = %.10f ns\n",tempo_a,tempo_b,tempo_c);
-	else printf("Medidas de tempo:\nInicialização das estruturas = %.10f\nMultiplicação de matrizes = %.10f\nFinalização do programa = %.10f\n",tempo_a,tempo_b,tempo_c);
+	printf("Medidas de tempo:\nInicialização das estruturas = %.10f ms\nMultiplicação de matrizes = %.10f ms\nFinalização do programa = %.10f ms\n",tempo_a,tempo_b,tempo_c);
 	return 0;
 }
-
-
-
-
-
-
-
