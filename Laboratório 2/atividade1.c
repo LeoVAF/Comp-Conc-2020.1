@@ -25,7 +25,7 @@ double* A;
 double* B;
 double* C;
 
-void* multiplicaMatriz(void* a){ 
+void* multiplicaMatriz(void* a){
 	int* numt = (int*) a;
 	int passo = N*NTHREADS;
 	double prod_int;
@@ -57,6 +57,8 @@ void imprimeMatriz(double* M, int N){
 
 
 int main(int argc, char* argv[]){
+	double inic;
+	GET_TIME(inic);
 	srand(time(NULL)); // Semente para matrizes aleatórias
 	if(argc == 1){
 		// Dados iniciais
@@ -129,7 +131,7 @@ int main(int argc, char* argv[]){
 	
 	free(A);free(B);free(C); // Liberação de memória;
 	GET_TIME(tf); // Tempo de finalização do programa
-	tempo_c = tf - ti + tempo_b + tempo_a;
+	tempo_c = tf - ti;
 	// Impressão dos tempos
 	printf("Medidas de tempo:\nInicialização das estruturas = %.10f s\nMultiplicação de matrizes = %.10f s\nFinalização do programa = %.10f s\n",tempo_a,tempo_b,tempo_c);
 	return 0;
