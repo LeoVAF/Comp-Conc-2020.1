@@ -98,7 +98,7 @@ int main(int argc, char* argv[]){
 	tempo_conc = tf-ti;
 	printf("Série sequencial: %.15f\nSérie concorrente: %.15f\nTempo sequencial: %.15f s\nTempo concorrente: %.15f s\n",serie_seq,serie_conc,tempo_seq,tempo_conc);
 	puts("");
-	printf("Erro sequencial = %.15f\nErro concorrente = %.15f\nDiferença erro_seq - erro_conc = %.15f\n", M_PI-serie_seq, M_PI-serie_conc,serie_conc-serie_seq);
+	printf("Erro sequencial =  %.15f\nErro concorrente = %.15f\nDiferença erro_seq - erro_conc = %.15f\n", M_PI-serie_seq, M_PI-serie_conc,serie_conc-serie_seq);
 	printf("Aceleração = %.15f\n", tempo_seq/tempo_conc);
 	free(ret);
 	return 0;
