@@ -19,12 +19,12 @@ double termo(double x ,long int n){
 
 // Limita x no intervalo [-2pi, 2pi]
 double normaliza(double y){
-	double norma = y, n = 2*M_PI, temp = y;
-	while(temp > n){
+	double norma = y, n = 360, temp = y;
+	while(temp >= n){
 		temp -= n;
 		norma = temp;
 	}
-	while(temp < -n){
+	while(temp <= -n){
 		temp += n;
 		norma = temp;
 	}
@@ -43,7 +43,7 @@ void* seno(void* arg){
 	// Intervalo para as threads
 	long int inic, fim;
 	inic = N*id/NTHREADS;
-	fim = N*(id+1)/NTHREADS-1;
+	fim = N*(id+1)/NTHREADS - 1;
 	
 	// Somatório resultante
 	double soma = 0;
@@ -130,7 +130,8 @@ int main(int argc, char* argv[]){
 			continue;
 		}
 			
-		x = normaliza((M_PI/180)*atof(resposta)); // Normaliza x devido limitação no fatorial
+		x = normaliza(atof(resposta)); // Normaliza x devido limitação no fatorial
+		x *= M_PI/180;
 		// Criação das threads
 		for(long int i = 0; i < NTHREADS; i++){
 			id[i] = i;
