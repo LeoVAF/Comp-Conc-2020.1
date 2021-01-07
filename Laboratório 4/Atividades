@@ -1,0 +1,49 @@
+ATIVIDADE 1:
+2- Execute o programa várias vezes. O log de execução impresso na tela foi sempre o esperado?
+   A condição lógica da aplicação foi atendida em todas as execuções?
+R: Sim, a aplicação tem sua condição lógica sempre atendida, pois o teste da variável "x" na
+   thread B em conjunto com a thread A nos permite esperar as duas impressões HELLO feitas 
+   pela thread A.
+
+3- Agora altere o número de threads A para 1. O que vai ocorrer na execução? O programa vai
+   terminar? Por quê?
+R: O programa entra em um ciclo infinito, pois o teste da variável "x" na thread A desbloqueia
+   a thread B se "x" fosse incrementado somente duas vezes, o que não acontece já que a thread
+   A só é chamada uma vez, sendo assim, a thread B é bloqueada e não pode ser desbloqueada pela
+   thread A.
+
+5- Agora altere o número de threads B para 2 e faça as correções necessárias no código para que
+   a aplicação continue funcionando.
+R: Bom, podemos fazer como a professora sugeriu, utilizando a rotina pthread_cond_broadcast(&x_cond),
+   mas também podemos fazer mais de uma chamada à rotina pthread_cond_signal(&x_cond), onde o número
+   de chamadas é igual ao número de threads B.
+
+
+ATIVIDADE 2:
+2- Execute o programa várias vezes. O log de execução impresso na tela foi sempre o esperado? 
+   A condição lógica da aplicação foi atendida em todas as execuções?
+R: Sim, a condição lógica do programa é semelhante à condição lógica da atividade 1, ressaltando o
+   uso da rotina pthread_cond_broadcast(&x_cond), pois o número de threads que podem ser bloqueadas
+   é maior que o número de threads que desbloqueiam e que não faz diferença na ordem de desbloqueio.
+   Podemos notar também, que o aumento de threads B necessitariam de modificações no programa para que
+   a condição lógica permaneça sendo satisfeita.
+
+
+ATIVIDADE 3:
+2- Execute o programa várias vezes. O log de execução impresso na tela foi sempre correto? A condição
+   lógica da aplicação foi atendida em todas as execuções?
+R: Sim, já que há uma condição que bloqueia a thread B antes desta imprimir "x=..." caso "x" não seja
+   múltiplo de 10.
+
+3- Podemos substituir a linha 50 pela linha 51? Justifique.
+R: Não, pois a thread B não é executada imediatamente após seu desbloqueio, sendo assim, existirá a
+   chance de uma outra thread modificar o valor de "x" antes da retomada de execução da thread B.
+   Portanto, o comando if não nos garante que "x" ainda permaneça sendo múltiplo de 10.
+
+4- Comente a linha 50 e descomente a linha 51, e execute novamente a aplicação várias vezes. O log de 
+   execução impresso na tela foi sempre correto? A condição lógica da aplicação foi atendida em todas
+   as execuções?
+R: Sim, a condição lógica foi satisfeita sempre para "TCOUNT" pequeno, mas como discutido nas aulas
+   gravadas, pode ser que uma aplicação esteja errada mas que seja difícil capturar esse erro nos testes.
+   Porém, quando aumentamos "TCOUNT", aumentamos a chance do erro aparecer.
+   
