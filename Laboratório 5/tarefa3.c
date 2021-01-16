@@ -10,8 +10,8 @@ int N; // Quantidade de threads leitoras
 int M; // Quantidade de threads escritoras
 int TAM; // Tamanho do vetor
 int leitores = 0, escritores = 0;
-int *vetor; // Vetor de inteiros e vetor de médias
-int prioridade[] = {0, 0}; // Vetor que determinará as prioridades
+int* vetor; // Vetor de inteiros e vetor de médias
+int *prioridades, inic_fila = 0, fim_fila = 0; // Vila de prioridades (0 para leitores e 1 para escritores)
 pthread_mutex_t mutex;
 pthread_cond_t lcond, econd;
 
@@ -21,15 +21,16 @@ void* leitor(void* arg){
 	int teste = 0, media = 0; // Testa se a thread foi bloqueada e guarda a média
 	
 	pthread_mutex_lock(&mutex); // Início da seção crítica
-	if(!prioridade[1]) prioridade[0] = 1; // Garante que não haja deadlock
+	prioridades[fim_fila++] = 0; // Entrou na fila de espera
 	printf("Leitor %i começou\n", id);
-	while(escritores > 0 || prioridade[1] == 1){ // Testa se há escritores escrevendo ou se querem escrever
+	while(escritores > 0 || prioridades[inic_fila] == 1){ // Testa se há escritores escrevendo ou se querem escrever
 		if(!teste) printf("Leitor %i foi bloqueado\n", id);
 		pthread_cond_wait(&lcond, &mutex);
 		teste = 1;
 	}
 	if(teste) printf("Leitor %i foi desbloqueado\n", id);
 	leitores++;
+	inic_fila++; // Saiu da fila de espera
 	pthread_mutex_unlock(&mutex); // Fim da seção crítica
 	for(int i = 0; i < TAM; i++){
 		media += vetor[i];
@@ -37,7 +38,6 @@ void* leitor(void* arg){
 	}
 	pthread_mutex_lock(&mutex);
 	leitores--; // Leitor terminou
-	prioridade[0] = 0; // A prioridade agora é zero
 	pthread_cond_broadcast(&econd); // Libera os escritores na fila de espera
 	pthread_mutex_unlock(&mutex);
 	
@@ -51,9 +51,9 @@ void* escritor(void* arg){
 	int teste = 0; // Testa se houve bloqueio
 	
 	pthread_mutex_lock(&mutex); // Início da seção crítica
-	if(!prioridade[1]) prioridade[1] = 1; // Garante que não haja deadlock
+	prioridades[fim_fila++] = 1; // Entrou na fila de espera
 	printf("Escritor %i começou\n", id);
-	while(escritores > 0 || leitores > 0 || prioridade[0] == 1){ // Verifica se é a única thread para utilizar o vetor
+	while(escritores > 0 || leitores > 0 || prioridades[inic_fila] == 0){ // Verifica se é a única thread para utilizar o vetor
 		if(!teste) printf("Escritor %i foi bloqueado\n", id);
 		pthread_cond_wait(&econd, &mutex);
 		teste = 1;
@@ -62,6 +62,7 @@ void* escritor(void* arg){
 	if(teste) printf("Escritor %i foi desbloqueado\n", id);
 	
 	escritores++; // Escritor começa a escrever
+	inic_fila++; // Saiu da fila de espera
 	// Início da seção de escrita
 	vetor[0] = id;
 	for(int i = 1; i < TAM-1; i++){
@@ -69,7 +70,6 @@ void* escritor(void* arg){
 	}
 	vetor[TAM-1] = id; // Fim da seção de escrita
 	escritores--;
-	prioridade[1] = 0; // Escritor terminou de escrever
 	pthread_cond_broadcast(&econd); pthread_cond_broadcast(&lcond); // Desbloqueia os leitores e escritores
 	pthread_mutex_unlock(&mutex); // Fim da seção crítica
 	
@@ -106,12 +106,13 @@ int main(int argc, char* argv[]){
 	pthread_t tid[N]; // Armazena o identificador do sistema para as threads de leitura e escritura
 	int id[N+M]; // Armazena o identificador do programa para as threads de leitura e escritura
 	vetor = (int *) malloc(TAM*sizeof(int)); // Aloca espaço para o vetor
+	prioridades = (int *) malloc((N+M)*sizeof(int));
 	int a = -5, b = -1; // Intervalo para o qual os valores devem variar [a, b]
 	
 	// Preenchimento de vetor com valores aleatórios
 	printf("Vetor = [");
 	for(int i = 0; i < TAM; i++){
-		vetor[i] = ceil((double) rand()/RAND_MAX*(a+b)) - a;
+		vetor[i] = ceil((double) rand()/RAND_MAX*(b-a)) + a;
 		printf(" %i",vetor[i]);
 	}
 	printf(" ]\n\n");
