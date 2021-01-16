@@ -21,7 +21,7 @@ void* leitor(void* arg){
 	int teste = 0, media = 0; // Testa se a thread foi bloqueada e guarda a média
 	
 	pthread_mutex_lock(&mutex); // Início da seção crítica
-	prioridade[0] = 1;
+	if(!prioridade[1]) prioridade[0] = 1; // Garante que não haja deadlock
 	printf("Leitor %i começou\n", id);
 	while(escritores > 0 || prioridade[1] == 1){ // Testa se há escritores escrevendo ou se querem escrever
 		if(!teste) printf("Leitor %i foi bloqueado\n", id);
@@ -51,7 +51,7 @@ void* escritor(void* arg){
 	int teste = 0; // Testa se houve bloqueio
 	
 	pthread_mutex_lock(&mutex); // Início da seção crítica
-	prioridade[1] = 1; // Diz que há escritor pronto para escrever
+	if(!prioridade[1]) prioridade[1] = 1; // Garante que não haja deadlock
 	printf("Escritor %i começou\n", id);
 	while(escritores > 0 || leitores > 0 || prioridade[0] == 1){ // Verifica se é a única thread para utilizar o vetor
 		if(!teste) printf("Escritor %i foi bloqueado\n", id);
