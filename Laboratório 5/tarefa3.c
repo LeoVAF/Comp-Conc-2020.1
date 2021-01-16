@@ -11,7 +11,7 @@ int M; // Quantidade de threads escritoras
 int TAM; // Tamanho do vetor
 int leitores = 0, escritores = 0;
 int *vetor; // Vetor de inteiros e vetor de médias
-int prioridade = 0; // Variável que determinará a prioridade (1 para escritores e 2 para leitores)
+int prioridade[] = {0, 0}; // Vetor que determinará as prioridades
 pthread_mutex_t mutex;
 pthread_cond_t lcond, econd;
 
@@ -21,9 +21,9 @@ void* leitor(void* arg){
 	int teste = 0, media = 0; // Testa se a thread foi bloqueada e guarda a média
 	
 	pthread_mutex_lock(&mutex); // Início da seção crítica
-	prioridade = 2;
+	prioridade[0] = 1;
 	printf("Leitor %i começou\n", id);
-	while(escritores > 0 || prioridade == 1){ // Testa se há escritores escrevendo ou se querem escrever
+	while(escritores > 0 || prioridade[1] == 1){ // Testa se há escritores escrevendo ou se querem escrever
 		if(!teste) printf("Leitor %i foi bloqueado\n", id);
 		pthread_cond_wait(&lcond, &mutex);
 		teste = 1;
@@ -37,7 +37,7 @@ void* leitor(void* arg){
 	}
 	pthread_mutex_lock(&mutex);
 	leitores--; // Leitor terminou
-	prioridade = 0; // A prioridade agora é zero
+	prioridade[0] = 0; // A prioridade agora é zero
 	pthread_cond_broadcast(&econd); // Libera os escritores na fila de espera
 	pthread_mutex_unlock(&mutex);
 	
@@ -51,9 +51,9 @@ void* escritor(void* arg){
 	int teste = 0; // Testa se houve bloqueio
 	
 	pthread_mutex_lock(&mutex); // Início da seção crítica
-	prioridade = 1; // Diz que há escritor pronto para escrever
+	prioridade[1] = 1; // Diz que há escritor pronto para escrever
 	printf("Escritor %i começou\n", id);
-	while(escritores > 0 || leitores > 0 || prioridade == 2){ // Verifica se é a única thread para utilizar o vetor
+	while(escritores > 0 || leitores > 0 || prioridade[0] == 1){ // Verifica se é a única thread para utilizar o vetor
 		if(!teste) printf("Escritor %i foi bloqueado\n", id);
 		pthread_cond_wait(&econd, &mutex);
 		teste = 1;
@@ -69,7 +69,7 @@ void* escritor(void* arg){
 	}
 	vetor[TAM-1] = id; // Fim da seção de escrita
 	escritores--;
-	prioridade = 0; // Escritor terminou de escrever
+	prioridade[1] = 0; // Escritor terminou de escrever
 	pthread_cond_broadcast(&econd); pthread_cond_broadcast(&lcond); // Desbloqueia os leitores e escritores
 	pthread_mutex_unlock(&mutex); // Fim da seção crítica
 	
