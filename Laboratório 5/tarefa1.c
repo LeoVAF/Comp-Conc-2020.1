@@ -105,7 +105,7 @@ int main(int argc, char* argv[]){
 	// Preenchimento de vetor com valores aleatórios
 	printf("Vetor = [");
 	for(int i = 0; i < TAM; i++){
-		vetor[i] = ceil((double) rand()/RAND_MAX*(a+b)) - a;
+		vetor[i] = ceil((double) rand()/RAND_MAX*(b-a)) + a;
 		printf(" %i",vetor[i]);
 	}
 	printf(" ]\n\n");
