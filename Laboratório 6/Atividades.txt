@@ -1,0 +1,42 @@
+Atividade 1:
+Há mudanças na ordem de execução das threads? Por que isso ocorre?
+R: Sim. Como visto em laboratórios anteriores, a mudança na ordem se deve ao fato de que
+   nem toda thread, que é criada, é escalonada para executar, devidos aos processos 
+   concorrentes no computador.
+
+Descomentando as linhas 43-46, qual alteração na execução da aplicação pode ser observada
+e por que ela ocorre?
+R: A thread principal sempre termina por último, sendo que antes, ela podia terminar antes
+   das outras threads.
+
+
+Atividade 2:
+Quais as principais diferenças entre o código HelloThread e OlaThread?
+R: Primeiro, a classe Hello implementa a interface Runnable, enquanto que a classe Ola
+   herda da classe Thread. Segundo, a criação das threads é feita de forma um pouco
+   diferente. No código HelloThread, usamos um objeto da classe Thread cujo construtor
+   usado recebe um objeto (objeto da classe Hello) que implementa a interface Runnabale
+   e, no código OlaThread, temos a classe Ola que herda da classe Thread e, por isso,
+   pode ser vista como Thread.
+
+
+Atividade 3:
+Qual a seção crítica do código? Qual a saída esperada para o programa?
+R: A seção crítica é toda a seção de código em que mais de uma thread pode acessar uma
+   variável compartilhada, nesse caso, no método inc(), da classe S, onde temos o incremento
+   de uma variável (r) compartilhada por duas threads.
+
+Os valores impressos foram sempre o valor esperado? Por que?
+R: Não, pois não há sincronização no código, fazendo com que uma variável compartilhada
+   seja modificada por mais de uma thread simultaneamente.
+
+
+Atividade 4:
+Depois de comentar as linhas 17-23 e descomentar as linhas 27-33, os valores impressos foram
+sempre o valor esperado? Por que?
+R: Agora, o método inc() se tornou uma ação atômica com o comando synchronized, sendo assim,
+   não temos mais seção crítica no código e o resultado sempre será 200000 
+
+
+
+
