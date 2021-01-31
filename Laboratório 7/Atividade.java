@@ -11,7 +11,6 @@ class Buffer{
         for(int i = 0; i < tam; i++) buffer.add( null);
     }
 
-    public synchronized int getTam(){ return buffer.size(); }
     public synchronized void imprime(){ System.out.println(buffer); }
 
     public void insere(Integer n) throws Exception{  // Coloca elemento na posição
