@@ -1,0 +1,21 @@
+Item (a) - Quais devem ser os valores iniciais dos semáforos?
+R: Iniciamos todos os semáforos com 1 sinal. É fácil ver que "em_l" e "em_e" são variáveis
+   de exclusão mútua, logo colcamos seu valor inicial valendo 1. A variável "escr" também
+   deve ter valor igual a 1, pela descrição do problema (apenas 1 escritor escreve por vez).
+   Para a variável restante "leit", também devemos colocar valor inicial igual a 1, pois 
+   estaremos escolhendo um leitor de cada vez para entrar na fila da leitura (porém, vários
+   leitores podem ler ao mesmo tempo) e também estamos bloqueando os escritores com essa variável.
+
+Item (b) - É possível reduzir o uso de mecanismos de sincronização?
+R: É possível utilizar 3 variáveis de sincronização, ao invés de 4. Façamos uma variável 
+   "mutex" que inicia com valor 1 e que substitui "em_l" e "em_e".
+
+Item (c) - Implemente o algoritmo.
+R: Código em atividade1_item_c.c.
+
+Item (d) - Altere o código das threads substituindo maior número possível de semáforos por locks.
+R: Código em atividade1_item_d.c.
+
+Item (e) - Descreva se os locks são recrusivos ou não.
+R: Os locks são recursivos, pois podemos ter mais de uma chamada de pthread_mutex_lock() antes de
+   pthread_mutex_unlock(). 
